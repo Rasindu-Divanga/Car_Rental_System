@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="CarRentalSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="CarRentalSystemEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="CarRentedRecords" EntityType="CarRentalSystemModel.CarRentedRecord" />
+    <EntitySet Name="TypeOfCars" EntityType="CarRentalSystemModel.TypeOfCar" />
+    <AssociationSet Name="FK_CarRentedRecord_TypeOfCar" Association="CarRentalSystemModel.FK_CarRentedRecord_TypeOfCar">
+      <End Role="TypeOfCar" EntitySet="TypeOfCars" />
+      <End Role="CarRentedRecord" EntitySet="CarRentedRecords" />
+    </AssociationSet>
+    <EntitySet Name="Roles" EntityType="CarRentalSystemModel.Role" />
+    <EntitySet Name="userLogins" EntityType="CarRentalSystemModel.userLogin" />
+    <EntitySet Name="UserRoles" EntityType="CarRentalSystemModel.UserRole" />
+    <AssociationSet Name="FK_UserRole_Roles" Association="CarRentalSystemModel.FK_UserRole_Roles">
+      <End Role="Role" EntitySet="Roles" />
+      <End Role="UserRole" EntitySet="UserRoles" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UserRole_userLogin" Association="CarRentalSystemModel.FK_UserRole_userLogin">
+      <End Role="userLogin" EntitySet="userLogins" />
+      <End Role="UserRole" EntitySet="UserRoles" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="CarRentedRecord">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CustomerName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="DateRented" Type="DateTime" Precision="3" />
+    <Property Name="DateReturned" Type="DateTime" Precision="3" />
+    <Property Name="Cost" Type="Decimal" Precision="18" Scale="0" />
+    <Property Name="TypeOfCar" Type="Int32" />
+    <NavigationProperty Name="TypeOfCar1" Relationship="CarRentalSystemModel.FK_CarRentedRecord_TypeOfCar" FromRole="CarRentedRecord" ToRole="TypeOfCar" />
+  </EntityType>
+  <EntityType Name="TypeOfCar">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Make" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="VIN" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="LicencePlateNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Year" Type="Int32" />
+    <NavigationProperty Name="CarRentedRecords" Relationship="CarRentalSystemModel.FK_CarRentedRecord_TypeOfCar" FromRole="TypeOfCar" ToRole="CarRentedRecord" />
+  </EntityType>
+  <Association Name="FK_CarRentedRecord_TypeOfCar">
+    <End Type="CarRentalSystemModel.TypeOfCar" Role="TypeOfCar" Multiplicity="0..1" />
+    <End Type="CarRentalSystemModel.CarRentedRecord" Role="CarRentedRecord" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TypeOfCar">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="CarRentedRecord">
+        <PropertyRef Name="TypeOfCar" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Role">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ShortName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="UserRoles" Relationship="CarRentalSystemModel.FK_UserRole_Roles" FromRole="Role" ToRole="UserRole" />
+  </EntityType>
+  <EntityType Name="userLogin">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="password" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="isActive" Type="Boolean" />
+    <NavigationProperty Name="UserRoles" Relationship="CarRentalSystemModel.FK_UserRole_userLogin" FromRole="userLogin" ToRole="UserRole" />
+  </EntityType>
+  <EntityType Name="UserRole">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="userid" Type="Int32" />
+    <Property Name="roleid" Type="Int32" />
+    <NavigationProperty Name="Role" Relationship="CarRentalSystemModel.FK_UserRole_Roles" FromRole="UserRole" ToRole="Role" />
+    <NavigationProperty Name="userLogin" Relationship="CarRentalSystemModel.FK_UserRole_userLogin" FromRole="UserRole" ToRole="userLogin" />
+  </EntityType>
+  <Association Name="FK_UserRole_Roles">
+    <End Type="CarRentalSystemModel.Role" Role="Role" Multiplicity="0..1" />
+    <End Type="CarRentalSystemModel.UserRole" Role="UserRole" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Role">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="UserRole">
+        <PropertyRef Name="roleid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UserRole_userLogin">
+    <End Type="CarRentalSystemModel.userLogin" Role="userLogin" Multiplicity="0..1" />
+    <End Type="CarRentalSystemModel.UserRole" Role="UserRole" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="userLogin">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="UserRole">
+        <PropertyRef Name="userid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
